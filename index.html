@@ -3,15 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Çarpan ve Bölen Keşfi</title>
+    <title>Sayıları Keşfedelim!</title>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@700;900&display=swap');
+        /* Çocuklar için çok sevimli, yuvarlak hatlı font */
+        @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap');
 
         body {
-            font-family: 'Nunito', sans-serif;
+            font-family: 'Fredoka', sans-serif;
             margin: 0;
             padding: 10px;
-            background: linear-gradient(135deg, #e0c3fc 0%, #8ec5fc 100%);
+            /* Cıvıl cıvıl şeker pembesi ve sarı arka plan */
+            background: linear-gradient(135deg, #ffecd2 0%, #fcb69f 100%);
             min-height: 100dvh;
             display: flex;
             flex-direction: column;
@@ -19,83 +21,91 @@
             justify-content: center;
             box-sizing: border-box;
             overflow: hidden;
+            touch-action: manipulation; /* Telefondaki çift tıklama yakınlaştırmasını önler */
         }
 
         .game-container {
-            background: white;
+            background: #ffffff;
             width: 100%;
             max-width: 500px;
             padding: 15px;
-            border-radius: 20px;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            border-radius: 25px;
+            box-shadow: 0 15px 35px rgba(255, 120, 100, 0.2);
             text-align: center;
             box-sizing: border-box;
-            border: 4px solid #fff;
-            outline: 4px dashed #9b59b6;
+            border: 6px solid #fff;
+            outline: 5px dashed #ff9ff3;
         }
 
         h1 {
-            color: #8e44ad;
-            font-size: 1.5rem;
+            color: #5f27cd;
+            font-size: 1.8rem;
             margin: 0 0 10px 0;
             line-height: 1.2;
+            text-shadow: 2px 2px 0px #ffeaa7;
         }
 
         .instruction-box {
-            background: #f1f2f6;
-            border-radius: 12px;
+            background: #f8efba;
+            border-radius: 15px;
             padding: 10px;
             margin-bottom: 15px;
-            border-left: 5px solid #ff9f43;
-            font-size: 1.1rem;
-            color: #2f3542;
-            font-weight: bold;
+            border: 4px solid #feca57;
+            font-size: 1.15rem;
+            color: #ff6b6b;
+            font-weight: 700;
             min-height: 60px;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: inset 0 -3px 0 rgba(0,0,0,0.05);
         }
 
         .grid {
             display: grid;
             grid-template-columns: repeat(10, 1fr);
-            gap: 4px;
+            gap: 5px;
             margin-bottom: 15px;
         }
 
         .cell {
             aspect-ratio: 1;
-            background: #fff;
-            border: 2px solid #dfe4ea;
-            border-radius: 6px;
+            background: #f1f2f6;
+            border: 3px solid #dfe4ea;
+            border-radius: 12px; /* Daha yuvarlak kutular */
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: 900;
+            font-weight: 700;
             font-size: 1.1rem;
             color: #57606f;
             cursor: pointer;
             user-select: none;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.68, -0.55, 0.265, 1.55);
             box-sizing: border-box;
+            box-shadow: 0 4px 0 #dfe4ea; /* Buton efekti */
         }
 
-        .cell:active { transform: scale(0.9); }
+        .cell:active { 
+            transform: translateY(4px);
+            box-shadow: 0 0 0 #dfe4ea;
+        }
 
         /* Seçim Durumları */
         .selected {
             background: #ffeaa7;
-            border-color: #fdcb6e;
+            border-color: #feca57;
             color: #d63031;
-            transform: scale(1.1);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            transform: scale(1.1) translateY(-2px);
+            box-shadow: 0 6px 0 #feca57;
             z-index: 2;
         }
 
         .marked-black {
-            background: #2d3436 !important;
+            background: #2f3542 !important;
             color: #fff !important;
-            border-color: #2d3436 !important;
+            border-color: #2f3542 !important;
+            box-shadow: 0 4px 0 #000000 !important;
         }
 
         .marked-red {
@@ -106,46 +116,55 @@
         .marked-red::after {
             content: '';
             position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            border: 4px solid #ff4757;
-            border-radius: 4px;
+            top: -3px; left: -3px; right: -3px; bottom: -3px;
+            border: 5px solid #ff4757;
+            border-radius: 12px;
             pointer-events: none;
         }
 
         /* Yanlış Seçim Titremesi */
         .shake {
             animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+            background: #ff6b81 !important;
+            color: white !important;
+            border-color: #ff4757 !important;
         }
         @keyframes shake {
-            10%, 90% { transform: translate3d(-1px, 0, 0); }
-            20%, 80% { transform: translate3d(2px, 0, 0); }
-            30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
-            40%, 60% { transform: translate3d(4px, 0, 0); }
+            10%, 90% { transform: translate3d(-2px, 0, 0); }
+            20%, 80% { transform: translate3d(3px, 0, 0); }
+            30%, 50%, 70% { transform: translate3d(-5px, 0, 0); }
+            40%, 60% { transform: translate3d(5px, 0, 0); }
         }
 
-        /* Doğru Seçim Büyümesi */
+        /* Doğru Seçim Zıplaması */
         .pop {
-            animation: pop 0.4s ease-out;
+            animation: pop 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
         @keyframes pop {
             0% { transform: scale(1); }
-            50% { transform: scale(1.3); }
-            100% { transform: scale(1); }
+            50% { transform: scale(1.4) rotate(-5deg); }
+            100% { transform: scale(1) rotate(0deg); }
         }
 
         .next-btn {
-            background: #2ed573;
+            background: #1dd1a1;
             color: white;
             border: none;
             padding: 12px 25px;
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: bold;
             border-radius: 30px;
-            box-shadow: 0 4px 15px rgba(46, 213, 115, 0.4);
+            box-shadow: 0 6px 0 #10ac84;
             cursor: pointer;
             display: none;
             margin: 0 auto;
-            font-family: 'Nunito', sans-serif;
+            font-family: 'Fredoka', sans-serif;
+            transition: transform 0.1s;
+        }
+        
+        .next-btn:active {
+            transform: translateY(6px);
+            box-shadow: 0 0 0 #10ac84;
         }
 
         /* Konfeti */
@@ -160,21 +179,79 @@
 <body>
     <canvas id="confetti"></canvas>
     <div class="game-container">
-        <h1>Çarpan ve Bölen Keşfi 🔍</h1>
+        <h1>Sayıları Keşfedelim! 🎈</h1>
         
         <div class="instruction-box" id="instruction">
-            Görev 1: Çarpımları 50 olan sayı çiftlerini bul ve seç! (Siyah Kalem)
+            Görev 1: Çarpımları 50 olan tüm sayı çiftlerini sırayla seç! (Siyah Kalem)
         </div>
 
         <div class="grid" id="grid">
             <!-- JS ile doldurulacak -->
         </div>
 
-        <button class="next-btn" id="nextBtn" onclick="startPhase2()">Sonraki Görev 👉</button>
-        <button class="next-btn" id="restartBtn" onclick="resetGame()" style="background:#3742fa; display:none;">Yeni Sayı İle Oyna 🔄</button>
+        <button class="next-btn" id="nextBtn" onclick="startPhase2()">Harika! Sıradaki Görev 👉</button>
+        <button class="next-btn" id="restartBtn" onclick="resetGame()" style="background:#5f27cd; box-shadow: 0 6px 0 #341f97; display:none;">Yeni Bir Sayı İle Oyna 🚀</button>
     </div>
 
     <script>
+        // --- SES MOTORU (Dahili Sentezleyici - Dosya Yüklemeye Gerek Yok) ---
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function playSound(type) {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const now = audioCtx.currentTime;
+            const osc = audioCtx.createOscillator();
+            const gain = audioCtx.createGain();
+            
+            osc.connect(gain);
+            gain.connect(audioCtx.destination);
+
+            if (type === 'tick') {
+                // Sadece kutuyu seçtiğinde çıkan minik tık sesi
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(800, now);
+                gain.gain.setValueAtTime(0.1, now);
+                gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1);
+                osc.start(now); osc.stop(now + 0.1);
+            } 
+            else if (type === 'correct') {
+                // Doğru eşleşme: Eğlenceli bir "Ding-Ding" sesi
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(600, now);
+                osc.frequency.setValueAtTime(900, now + 0.1);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } 
+            else if (type === 'wrong') {
+                // Yanlış seçim: Komik bir "Bloop" sesi
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(250, now);
+                osc.frequency.linearRampToValueAtTime(150, now + 0.3);
+                gain.gain.setValueAtTime(0.3, now);
+                gain.gain.linearRampToValueAtTime(0, now + 0.3);
+                osc.start(now); osc.stop(now + 0.3);
+            } 
+            else if (type === 'tada') {
+                // Bölüm bitirme: Zafer melodisi!
+                [523.25, 659.25, 783.99, 1046.50].forEach((freq, i) => {
+                    const o = audioCtx.createOscillator();
+                    const g = audioCtx.createGain();
+                    o.type = 'sine';
+                    o.connect(g); g.connect(audioCtx.destination);
+                    o.frequency.value = freq;
+                    g.gain.setValueAtTime(0, now + i*0.1);
+                    g.gain.linearRampToValueAtTime(0.3, now + i*0.1 + 0.05);
+                    g.gain.exponentialRampToValueAtTime(0.01, now + i*0.1 + 0.5);
+                    o.start(now + i*0.1); o.stop(now + i*0.1 + 0.5);
+                });
+            }
+        }
+
+        // --- OYUN MANTIĞI ---
         const grid = document.getElementById('grid');
         const instruction = document.getElementById('instruction');
         const nextBtn = document.getElementById('nextBtn');
@@ -208,8 +285,9 @@
                 }
             }
             
-            instruction.innerHTML = `Görev 1: Çarpımları <b style="color:#e84118">${targetNumber}</b> olan iki sayıyı sırayla seç! (Siyah Kalem)`;
-            instruction.style.borderColor = "#2d3436";
+            instruction.innerHTML = `Görev 1: Çarpımları <b style="color:#5f27cd; font-size:1.4rem;">${targetNumber}</b> olan tüm sayı çiftlerini sırayla seç! 🖍️`;
+            instruction.style.borderColor = "#feca57";
+            instruction.style.color = "#ff6b6b";
             nextBtn.style.display = "none";
             restartBtn.style.display = "none";
 
@@ -225,17 +303,22 @@
         }
 
         function handleCellClick(cell, val) {
+            // Sesin mobilde çalışması için ilk tıklamada AudioContext başlatılır
+            if (!audioCtx) { audioCtx = new AudioContext(); }
+
             if(currentPhase === 1) {
-                // Siyah Kalem - Çarpan Çiftleri
+                // --- BÖLÜM 1: ÇARPANLARI BULMA ---
                 if(cell.classList.contains('marked-black')) return;
                 
                 if(!firstSelection) {
                     firstSelection = { cell, val };
                     cell.classList.add('selected');
+                    playSound('tick'); // İlk sayıya tıkladı sesi
                 } else {
                     if(firstSelection.cell === cell) {
                         cell.classList.remove('selected');
                         firstSelection = null;
+                        playSound('tick');
                         return;
                     }
                     
@@ -243,6 +326,8 @@
                     let num2 = val;
                     
                     if(num1 * num2 === targetNumber) {
+                        // DOĞRU SEÇİM
+                        playSound('correct');
                         firstSelection.cell.classList.remove('selected');
                         firstSelection.cell.classList.add('marked-black', 'pop');
                         cell.classList.add('marked-black', 'pop');
@@ -250,11 +335,14 @@
                         
                         if(pairsFound === validPairs.length) {
                             setTimeout(() => {
-                                instruction.innerHTML = "Harika! Tüm çarpan çiftlerini bulup siyah kalemle işaretledik. 🎉";
+                                playSound('tada'); // Görev bitiş sesi
+                                instruction.innerHTML = "Süper! 🌟 Bütün çiftleri buldun! Şimdi diğer göreve geçelim.";
                                 nextBtn.style.display = "block";
                             }, 500);
                         }
                     } else {
+                        // YANLIŞ SEÇİM
+                        playSound('wrong');
                         firstSelection.cell.classList.remove('selected');
                         firstSelection.cell.classList.add('shake');
                         cell.classList.add('shake');
@@ -268,22 +356,28 @@
                 }
             } 
             else if(currentPhase === 2) {
-                // Kırmızı Kalem - Bölenleri Bulma
+                // --- BÖLÜM 2: BÖLENLERİ BULMA ---
                 if(cell.classList.contains('marked-red')) return;
 
                 if(targetNumber % val === 0) {
+                    // DOĞRU SEÇİM
+                    playSound('correct');
                     cell.classList.add('marked-red', 'pop');
                     divisorsFound++;
                     
                     if(divisorsFound === validDivisors.length) {
                         setTimeout(() => {
-                            instruction.innerHTML = "İnanılmaz! 🤯 Kırmızı işaretlerin hepsi siyahların üzerine geldi!<br><br><b>Demek ki bir sayının Çarpanları ile Bölenleri AYNI sayılarmış!</b>";
-                            instruction.style.borderColor = "#44bd32";
+                            playSound('tada'); // Zafer sesi
+                            instruction.innerHTML = "İnanılmaz! 🤯 Kırmızı işaretlerin hepsi siyahların üzerine geldi!<br><br><b>Bir sayının Çarpanları ile Bölenleri AYNI sayılarmış! 🎉</b>";
+                            instruction.style.borderColor = "#1dd1a1";
+                            instruction.style.color = "#10ac84";
                             restartBtn.style.display = "block";
                             fireConfetti();
                         }, 500);
                     }
                 } else {
+                    // YANLIŞ SEÇİM
+                    playSound('wrong');
                     cell.classList.add('shake');
                     setTimeout(() => cell.classList.remove('shake'), 400);
                 }
@@ -293,18 +387,21 @@
         function startPhase2() {
             currentPhase = 2;
             nextBtn.style.display = "none";
-            instruction.innerHTML = `Görev 2: Şimdi <b style="color:#e84118">${targetNumber}</b> sayısını kalansız bölen sayıları seç! (Kırmızı Kalem)`;
+            playSound('tick');
+            instruction.innerHTML = `Görev 2: Şimdi <b style="color:#5f27cd; font-size:1.4rem;">${targetNumber}</b> sayısını kalansız (tam) bölen tüm sayıları bul! 🎯`;
             instruction.style.borderColor = "#ff4757";
+            instruction.style.color = "#ff4757";
         }
 
         function resetGame() {
+            playSound('tick');
             const options = [12, 18, 20, 24, 30, 36, 40, 48, 50];
             let newTarget = options[Math.floor(Math.random() * options.length)];
             initGame(newTarget);
             clearConfetti();
         }
 
-        // Konfeti Kodları
+        // --- KONFETİ KODLARI ---
         let particles = [];
         const canvas = document.getElementById('confetti');
         const ctx = canvas.getContext('2d');
@@ -313,14 +410,14 @@
         function fireConfetti() {
             canvas.width = window.innerWidth;
             canvas.height = window.innerHeight;
-            for(let i=0; i<100; i++) {
+            for(let i=0; i<150; i++) {
                 particles.push({
                     x: canvas.width/2,
                     y: canvas.height/2,
-                    r: Math.random()*6+2,
-                    dx: Math.random()*10-5,
-                    dy: Math.random()*10-5,
-                    color: ['#ff4757', '#2ed573', '#1e90ff', '#ffa502', '#9b59b6'][Math.floor(Math.random()*5)]
+                    r: Math.random()*8+3,
+                    dx: Math.random()*15-7.5,
+                    dy: Math.random()*15-7.5,
+                    color: ['#ff4757', '#1dd1a1', '#5f27cd', '#feca57', '#48dbfb'][Math.floor(Math.random()*5)]
                 });
             }
             animateConfetti();
@@ -331,7 +428,7 @@
             particles.forEach(p => {
                 p.x += p.dx;
                 p.y += p.dy;
-                p.dy += 0.1;
+                p.dy += 0.2; // Yerçekimi
                 ctx.beginPath();
                 ctx.arc(p.x, p.y, p.r, 0, Math.PI*2);
                 ctx.fillStyle = p.color;
@@ -346,6 +443,7 @@
             particles = [];
         }
 
+        // Oyunu başlat
         initGame(50);
     </script>
 </body>
